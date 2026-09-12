@@ -1,12 +1,7 @@
-# os.path.join() builds file paths correctly (works on Windows and Mac/Linux).
-# os.path.exists() checks if a file already exists on disk.
-import os
 
-# pickle lets us save any Python object (like our embeddings dictionary)
-# to a file, and load it back later exactly as it was.
+import os
 import pickle
 
-# Our reusable embedding function from Stage 5.
 from embedding_utils import embed_image
 
 IMAGES_FOLDER = "images"
@@ -16,23 +11,16 @@ VALID_EXTENSIONS = (".jpg", ".jpeg", ".png")
 
 
 def load_cache():
-    """
-    Loads previously saved embeddings from disk, if the cache file exists.
-    Returns an empty dictionary if no cache exists yet.
-    """
+    
     if os.path.exists(CACHE_FILE):
-        # "rb" = read binary mode, required for pickle files.
+     
         with open(CACHE_FILE, "rb") as f:
             return pickle.load(f)
     return {}
 
 
 def save_cache(embeddings):
-    """
-    Saves the embeddings dictionary to disk so future runs can reuse it
-    instead of recomputing everything.
-    """
-    # "wb" = write binary mode, required for pickle files.
+ 
     with open(CACHE_FILE, "wb") as f:
         pickle.dump(embeddings, f)
 
@@ -44,14 +32,13 @@ def build_embeddings():
     computes embeddings for images that are new since the last run.
     """
     filenames = [
-        f for f in os.listdir(IMAGES_FOLDER) # os.listdir() lets us see all filenames inside a folder.
+        f for f in os.listdir(IMAGES_FOLDER) 
         if f.lower().endswith(VALID_EXTENSIONS)
     ]
 
-    # Load whatever we've already computed in previous runs.
+   
     embeddings = load_cache()
 
-    # Figure out which images are NOT already in our cache.
     new_filenames = [f for f in filenames if f not in embeddings]
 
     if not new_filenames:
@@ -63,12 +50,10 @@ def build_embeddings():
 
     total = len(new_filenames)
     for index, filename in enumerate(new_filenames, start=1):
-        image_path = os.path.join(IMAGES_FOLDER, filename)# os.path.join() builds file paths correctly (works on Windows and Mac/Linux).
+        image_path = os.path.join(IMAGES_FOLDER, filename)
         print(f"Processing {index}/{total}: {filename}")
         embeddings[filename] = embed_image(image_path)
 
-    # Also remove entries for images that no longer exist in the folder
-    # (e.g. if you deleted a file since the last run).
     embeddings = {f: v for f, v in embeddings.items() if f in filenames}
 
     save_cache(embeddings)
