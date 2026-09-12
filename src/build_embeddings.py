@@ -61,8 +61,6 @@ def build_embeddings():
 
     return embeddings
 
-
-# Quick manual test - only runs if you execute this file directly.
 if __name__ == "__main__":
     result = build_embeddings()
     print(f"\nTotal embeddings available: {len(result)}")
