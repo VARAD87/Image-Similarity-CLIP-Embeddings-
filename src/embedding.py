@@ -3,6 +3,7 @@ from PIL import Image
 from transformers import CLIPModel, CLIPProcessor
 MODEL_NAME = "openai/clip-vit-base-patch32"
 
+
 print("Loading CLIP model... (this may take a minute the first time)")
 
 model = CLIPModel.from_pretrained(MODEL_NAME)
