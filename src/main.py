@@ -12,7 +12,6 @@ def main():
     print("Loading candidate embeddings...")
     candidate_embeddings = build_embeddings()
 
-    # Get the single best match.
     best_filename, best_score, is_confident = find_best_match(reference_embedding, candidate_embeddings)
 
     if is_confident:
@@ -21,7 +20,7 @@ def main():
         print(f"\nNo confident match found. Closest option: {best_filename}")
 
     print(f"Similarity: {best_score:.2f}")
-    # Get the top 5 matches.
+    # Get the top 3 matches.
     top_matches = find_top_matches(reference_embedding, candidate_embeddings, top_k=3)
 
     print("\nTop Matches:\n")
