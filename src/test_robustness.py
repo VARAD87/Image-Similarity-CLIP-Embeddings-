@@ -7,10 +7,9 @@ VARIATIONS_FOLDER = "test_variations"
 
 
 def main():
-    # Embed the original once.
+
     original_embedding = embed_image(SOURCE_IMAGE)
 
-    # Embed and compare every variation against the original.
     variations = os.listdir(VARIATIONS_FOLDER)
 
     print(f"Comparing variations against: {SOURCE_IMAGE}\n")
