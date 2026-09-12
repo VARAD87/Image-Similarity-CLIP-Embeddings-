@@ -2,10 +2,7 @@ from embedding_utils import embed_image
 from build_embeddings import build_embeddings
 from similarity import find_best_match
 
-# Try this with different reference images to build intuition:
-# - the exact duplicate of a candidate (expect a very high score)
-# - your original reference (expect a moderate score, per Stage 9)
-TEST_IMAGE = "reference/thomas_shellby.png"  # change extension/name as needed
+TEST_IMAGE = "reference/thomas_shellby.png"  
 
 def main():
     reference_embedding = embed_image(TEST_IMAGE)
