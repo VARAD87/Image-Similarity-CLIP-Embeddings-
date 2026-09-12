@@ -2,6 +2,7 @@ from embedding_utils import embed_image
 from build_embeddings import build_embeddings
 from similarity import find_best_match
 
+
 TEST_IMAGE = "reference/thomas_shellby.png"  
 
 def main():
