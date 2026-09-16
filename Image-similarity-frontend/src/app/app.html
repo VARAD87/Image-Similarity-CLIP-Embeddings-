@@ -1,0 +1,102 @@
+<div class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <h1>Image Similarity Matcher</h1>
+    <p>Upload an image to scan and discover top visual matches</p>
+  </header>
+
+  <!-- Upload Card -->
+  <div class="card upload-card">
+    <div class="upload-zone">
+      <input type="file" id="fileInput" accept="image/*" (change)="onFileSelected($event)" class="file-input" />
+      <label for="fileInput" class="file-label">
+        <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <span>{{ selectedFile ? selectedFile.name : 'Choose an image file' }}</span>
+      </label>
+    </div>
+
+    <!-- Preview Container -->
+    <div *ngIf="previewUrl()" class="preview-container">
+      <span class="badge">Uploaded Image (Double click to expand)</span>
+      <div class="image-wrapper clickable" (dblclick)="openLightbox(previewUrl())">
+        <img [src]="previewUrl()" alt="Source preview" />
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <button (click)="onSubmit()" [disabled]="isLoading()" class="btn btn-primary">
+      <span *ngIf="isLoading()" class="spinner"></span>
+      {{ isLoading() ? 'Matching...' : 'Find Match' }}
+    </button>
+
+    <!-- Error Banner -->
+    <div *ngIf="errorMessage()" class="alert alert-error">
+      {{ errorMessage() }}
+    </div>
+  </div>
+
+  <!-- Results View -->
+  <div *ngIf="result()" class="results-container">
+    
+    <!-- Confident / Best Match Section -->
+    <div class="card match-card" [class.confident]="result().best_match.is_confident" [class.unconfident]="!result().best_match.is_confident">
+      <div class="match-header">
+        <span class="status-badge">
+          {{ result().best_match.is_confident ? '✅ Confident Match' : '⚠️ Closest Option (Not Confident)' }}
+        </span>
+        <span class="score-pill">
+          {{ (result().best_match.similarity * 100) | number:'1.1-1' }}% Similarity
+        </span>
+      </div>
+
+      <div class="match-body">
+        <div class="image-wrapper lg clickable" (dblclick)="openLightbox(IMAGE_BASE_URL + result().best_match.filename)">
+          <img [src]="IMAGE_BASE_URL + result().best_match.filename" alt="Best match" />
+        </div>
+        <div class="match-info">
+          <h3>{{ result().best_match.filename }}</h3>
+          <p>Score: <strong>{{ result().best_match.similarity }}</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revealed Top Matches -->
+    <div class="top-matches-section">
+      <h2>Top Matches</h2>
+      
+      <div class="grid">
+        <div *ngFor="let match of result().top_matches.slice(0, visibleCount()); let i = index" class="card grid-card">
+          <div class="rank-badge">#{{ i + 1 }}</div>
+          <div class="image-wrapper clickable" (dblclick)="openLightbox(IMAGE_BASE_URL + match.filename)">
+            <img [src]="IMAGE_BASE_URL + match.filename" alt="Top match image" />
+          </div>
+          <div class="grid-card-info">
+            <p class="filename">{{ match.filename }}</p>
+            <p class="similarity">Similarity: <strong>{{ match.similarity }}</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Show Next Button -->
+      <div *ngIf="visibleCount() < result().top_matches.length" class="action-footer">
+        <button (click)="showNext()" class="btn btn-secondary">
+          Show Next Match ({{ visibleCount() + 1 }} of {{ result().top_matches.length }})
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Fullscreen Lightbox Modal -->
+  <div *ngIf="expandedImageUrl()" 
+       class="lightbox-overlay" 
+       (click)="closeLightbox()" 
+       (dblclick)="closeLightbox()">
+    <div class="lightbox-content">
+      <img [src]="expandedImageUrl()" alt="Full view" />
+      <span class="lightbox-hint">Double-click or tap anywhere to exit full view</span>
+    </div>
+  </div>
+</div>
